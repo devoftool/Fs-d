@@ -61,15 +61,21 @@ async function load(cat) {
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
-        <img src="${preview}" loading="lazy"
-          style="width:100%;height:220px;object-fit:cover;border-radius:12px">
-        <h3>${name}</h3>
-        <p style="font-size:14px;color:#aaa">Size: ${formatBytes(f.size)}</p>
-        <button class="download"
-          onclick="window.open('${f.webViewLink}','_blank')">
-          Download
-        </button>
-      `;
+  <img
+    src="previews/${name}.jpg"
+    loading="lazy"
+    onerror="this.src='placeholder.png'"
+    style="width:100%;height:220px;object-fit:cover;border-radius:12px"
+  >
+  <h3>${name}</h3>
+  <p style="font-size:14px;color:#aaa">
+    Size: ${formatBytes(f.size)}
+  </p>
+  <button class="download"
+    onclick="window.open('${f.webViewLink}','_blank')">
+    Download
+  </button>
+`;
       mods.appendChild(card);
     }
 
