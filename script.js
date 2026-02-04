@@ -3,7 +3,7 @@ const mods = document.getElementById("mods");
 const counter = document.getElementById("mod-counter");
 
 // change if needed
-const IMAGE_BASE = "./img/";
+const IMAGE_BASE = "./";
 
 let currentRequestId = 0;
 
