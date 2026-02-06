@@ -2,8 +2,8 @@
 const mods = document.getElementById("mods");
 const counter = document.getElementById("mod-counter");
 
-// change if needed
 const IMAGE_BASE = "./";
+const WORKER_BASE = "https://auto.h208698.workers.dev";
 
 let currentRequestId = 0;
 
@@ -20,6 +20,12 @@ function clean(name) {
   return name.replace(/\.[^/.]+$/, "");
 }
 
+// extract google drive id
+function getDriveId(url) {
+  const m = url.match(/id=([^&]+)/);
+  return m ? m[1] : null;
+}
+
 // main loader
 async function load(cat) {
   const requestId = ++currentRequestId;
@@ -28,7 +34,7 @@ async function load(cat) {
   counter.innerText = "";
 
   try {
-    const res = await fetch(`https://auto.h208698.workers.dev/${cat}`);
+    const res = await fetch(`${WORKER_BASE}/${cat}`);
     const data = await res.json();
 
     if (requestId !== currentRequestId) return;
@@ -40,43 +46,47 @@ async function load(cat) {
       total++;
 
       const name = clean(f.name);
+      const fileId = getDriveId(f.download);
+
       const card = document.createElement("div");
       card.className = "card";
 
       let imgHTML = "";
 
-      // check image silently
       const img = new Image();
       img.src = `${IMAGE_BASE}${name}.jpg`;
 
       img.onload = () => {
         imgHTML = `
-          <img
-            src="${img.src}"
-            loading="lazy"
-            style="width:100%;height:200px;object-fit:cover;border-radius:12px"
-          >
+          <img src="${img.src}"
+               loading="lazy"
+               style="width:100%;height:200px;object-fit:cover;border-radius:12px">
         `;
         render();
       };
 
-      img.onerror = () => {
-        render(); // no image
-      };
+      img.onerror = render;
 
       function render() {
-        if (card.innerHTML !== "") return;
+        if (card.innerHTML) return;
 
         card.innerHTML = `
           ${imgHTML}
           <h3>${name}</h3>
           <p style="font-size:13px;color:#aaa">
-            Size: ${formatBytes(f.size)}
+            Size: ${f.sizeMB || "?"} MB
           </p>
-          <button class="download"
-            onclick="window.open('${f.webViewLink}','_blank')">
-            Open
-          </button>
+
+          ${
+            fileId
+              ? `<button class="download"
+                   onclick="window.location.href='${WORKER_BASE}/download/${fileId}'">
+                   Download
+                 </button>`
+              : `<button class="download" disabled>
+                   Invalid link
+                 </button>`
+          }
         `;
       }
 
@@ -85,7 +95,7 @@ async function load(cat) {
 
     counter.innerText = `Total mods: ${total}`;
 
-    if (total === 0) {
+    if (!total) {
       mods.innerHTML = "<p style='opacity:.6'>No mods found</p>";
     }
 
@@ -95,18 +105,12 @@ async function load(cat) {
   }
 }
 
+// scroll effects
 window.addEventListener("scroll", () => {
-    if (window.scrollY > 20) {
-      document.body.classList.add("scrolled");
-    } else {
-      document.body.classList.remove("scrolled");
-    }
-  });
-  
-  window.addEventListener("scroll", () => {
-  const sc = window.scrollY;
+  document.body.classList.toggle("scrolled", window.scrollY > 20);
+
   const img = document.querySelector(".banner .gif");
   if (img) {
-    img.style.filter = `blur(${Math.min(sc / 60, 6)}px)`;
+    img.style.filter = `blur(${Math.min(window.scrollY / 60, 6)}px)`;
   }
 });
