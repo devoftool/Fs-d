@@ -94,3 +94,19 @@ async function load(cat) {
     console.error(err);
   }
 }
+
+window.addEventListener("scroll", () => {
+    if (window.scrollY > 20) {
+      document.body.classList.add("scrolled");
+    } else {
+      document.body.classList.remove("scrolled");
+    }
+  });
+  
+  window.addEventListener("scroll", () => {
+  const sc = window.scrollY;
+  const img = document.querySelector(".banner .gif");
+  if (img) {
+    img.style.filter = `blur(${Math.min(sc / 60, 6)}px)`;
+  }
+});
