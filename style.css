@@ -170,3 +170,10 @@ body.scrolled {
     0 0 8px rgba(255,0,0,0.6),
     0 0 16px rgba(255,0,0,0.4);
 }
+
+.btn{
+  margin-top:5%;
+  margin-left:30px;
+  margin-right:30px;
+  text-align: center;
+}
