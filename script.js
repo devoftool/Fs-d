@@ -69,15 +69,15 @@ async function load(cat) {
         if (card.innerHTML !== "") return;
 
         card.innerHTML = `
-          ${imgHTML}
-          <h3>${name}</h3>
-          <p style="font-size:13px;color:#aaa">
-            Size: ${formatBytes(f.size)}
-          </p>
-          <button class="download"
-            onclick="window.location.href='${WORKER_BASE}/download/${f.fileId}'">
-            Download
-          </button>
+        ${imgHTML}
+        <h3>${name}</h3>
+        <p style="font-size:13px;color:#aaa">
+        Size: ${formatBytes(f.size)}
+        </p>
+        <button class="download"
+        onclick="startDownload('${WORKER_BASE}/download/${f.fileId}', 6)">
+        Download
+        </button>
         `;
       }
 
@@ -112,3 +112,29 @@ window.addEventListener("scroll", () => {
     img.style.filter = `blur(${Math.min(window.scrollY / 60, 6)}px)`;
   }
 });
+
+function startDownload(url, seconds = 5) {
+  const lock = document.getElementById("download-lock");
+  const timerText = document.getElementById("timer-text");
+
+  lock.style.display = "flex";
+  document.body.style.overflow = "hidden"; // scroll lock
+
+  let t = seconds;
+  timerText.innerText = t;
+
+  const interval = setInterval(() => {
+    t--;
+    timerText.innerText = t;
+
+    if (t <= 0) {
+      clearInterval(interval);
+
+      lock.style.display = "none";
+      document.body.style.overflow = "";
+
+      // actual download
+      window.location.href = url;
+    }
+  }, 1000);
+}
