@@ -36,7 +36,21 @@
 <div id="mod-counter" style="color:#fff;font-size:18px;margin-bottom:12px"></div>
 <div id="mods" class="mods-container"></div>
 <div id="mods"></div>
-
+<div id="download-lock" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  z-index:9999;
+  color:#fff;
+  font-size:22px;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+">
+  <p>Preparing download...</p>
+  <p id="timer-text">5</p>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
